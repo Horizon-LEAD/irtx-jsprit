@@ -1,0 +1,26 @@
+{
+  "vehicle_types": [
+    {
+      "id": "van",
+      "capacity" : 20,
+      "cost_per_day_EUR" : 85.0,
+      "cost_per_km_EUR" : 0.15,
+      "co2_per_km_g" : 130.0,
+      "energy_per_km_Wh" : 120.0,
+      "speed_km_h": 40.0
+    }, {
+      "id": "cargobike",
+      "capacity" : 4,
+      "cost_per_day_EUR" : 65.0,
+      "cost_per_km_EUR" : 0.02,
+      "co2_per_km_g" : 20.0,
+      "energy_per_km_Wh" : 20.0,
+      "speed_km_h": 20.0
+    }
+  ],
+  "ucc": {
+    "location": { "lat" : 45.74243052132232, "lng" : 4.824800491333009 },
+    "vehicle_types": [ "cargobike", "van" ]
+  },
+  "operators": []
+}
