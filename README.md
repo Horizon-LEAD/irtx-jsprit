@@ -3,6 +3,7 @@
 ## TODO
 - Clean environment.yml
 - Update Rexel and Swoopin example data
+- Update more realistic cost structure
 - Provide static input to INLECOM (so no need to run upstream models for testing)
 - Test that all of this works smoothly with the provided data
 - Generate the standard cases for downstream testing
