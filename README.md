@@ -399,8 +399,8 @@ files can then be run using the following command:
 
 ```bash
 java -cp /irtx-jsprit/java/target/lead-jsprit-1.0.0.jar fr.irtx.lead.jsprit.RunSolver \
-  --problem-path /irtx-jsprit/data/scenario.json \
-  --solution-path /irtx-jsprit/data/solution.json \
+  --problem-path /irtx-jsprit/data/scenario_*.json \
+  --solution-path /irtx-jsprit/data/solution_*.json \
   --crs EPSG:2154 \
   --osm-path /irtx-jsprit/data/scenario.osm.pbf
 ```
@@ -416,7 +416,7 @@ in `/irtx-parcels-to-jsprit/output` in this example.
 ```bash
 python3 prepare_scenario.py \
   --scenario-path scenario_lyon/template.json \
-  --output-path data/scenario.json \
+  --output-path data/scenario_baseline_2022.json \
   --operator-path scenario_lyon/rexel.json \
   --operator-path /irtx-parcels-to-jsprit/output/laposte_2022.json \
   --shipment-type:rexel pickup \
@@ -434,7 +434,7 @@ by changing the last four lines.
 ```bash
 python3 prepare_scenario.py \
   --scenario-path scenario_lyon/template.json \
-  --output-path data/scenario.json \
+  --output-path data/scenario_ucc_2022.json \
   --operator-path scenario_lyon/rexel.json \
   --operator-path /irtx-parcels-to-jsprit/output/laposte_2022.json \
   --shipment-type:rexel delivery \
@@ -450,7 +450,7 @@ In this scenario the parcel demand for 2030 is used.
 ```bash
 python3 prepare_scenario.py \
   --scenario-path scenario_lyon/template.json \
-  --output-path data/scenario.json \
+  --output-path data/scenario_ucc_2030.json \
   --operator-path scenario_lyon/rexel.json \
   --operator-path /path/to/parcels/laposte_2030.json \
   --shipment-type:rexel delivery \

@@ -50,7 +50,7 @@ while k < len(arguments):
 
         shipment_type = arguments[k]
 
-        if not shipment_type in ("delivery", "pickup"):
+        if not shipment_type in ("delivery", "pickup", "none"):
             raise RuntimeError("Invalid shipment type for {}".format(operator))
 
         shipment_types[operator] = shipment_type
