@@ -1,12 +1,11 @@
 # IRTX JSprit Implementation
 
 ## TODO
-- Clean environment.yml
-- Update Rexel and Swoopin example data
+
 - Provide static input to INLECOM (so no need to run upstream models for testing)
-- Test that all of this works smoothly with the provided data
 - Generate the standard cases for downstream testing
-- Add JSON
+
+- Test that all of this works smoothly with the provided data
 
 ## Introduction
 
@@ -22,7 +21,7 @@ and new developments around JSprit in LEAD have been documented in
 
 > Mahmoud, A., Chouaki, T., Hörl, S., Puchinger, J., 2022. Adapting JSprit for the Electric Vehicle Routing Problem with Recharging: Implementation and Benchmark. International Journal for Traffic and Transport Engineering 12 (3), 340-351. http://dx.doi.org/10.7708/ijtte2022.12(3).04
 
-The model has been streamlined to work upon configurable scenarios that define:
+The model has been streamlined to work on configurable scenarios that define:
 
 - Vehicle types with their individual properties such as daily and per-distance costs, speeds, energy consumption and emissions
 - Operators with their individual distribution centers (by coordinate) and demand to fulfill during one day (by coordinate) and a list of vehicle types that are available at their depots
@@ -33,6 +32,8 @@ The model, hence, allows to build a rich set of shipment scenarios. In the basel
 
 Additional scenarios can be constructed, for instance, by changing the cost structures
 and observing trade-offs between vehicle types.
+
+Routing-based costs are either approximated using Euclidean distance or calculated directly based on OpenStreetMap road network data.
 
 ## Requirements
 
@@ -67,11 +68,8 @@ command line parameters.
 **Network**
 
 In order to define the network topology on which the deliveries will be routed,
-data from OpenStreetMap needs to be provided in `pbf` format. In the specific
-case for Lyon, the latest snapshot of the Rhône-Alpes region provided by Geofabrik
-can be used:
-
-> https://download.geofabrik.de/europe/france/rhone-alpes.html
+data from OpenStreetMap needs to be provided in `pbf` format. Regular snapshots
+of OpenStreetMap data are available publicly from [Geofabrik](https://geofabrik.de/).
 
 Processing the whole OpenStreetMap each time the model is run would take too
 much time, so it is recommended to trim the data to the specific use case
@@ -88,14 +86,6 @@ python3 prepare_perimeter.py \
 
 The input perimeter can be provided in any common geographic data format that
 is understood by `geopandas` / `fiona` such as Shape file (`shp`) or GeoPackgage (`gpkg`).
-For the specific case of Lyon, the perimeter is provided in the `/scenario_lyon` directory
-in the LEAD repository. Hence, the correct `poly` file can be created by calling
-
-```bash
-python3 prepare_perimeter.py \
-  --input-path /irtx-jsprit/scenario_lyon/perimeter.gpkg \
-  --output-path /irtx-jsprit/data/perimeter.poly
-```
 
 The resulting `poly` file can then be passed to `osmosis` to cut the case study
 area. The command is packaged in `prepare_osm.sh` which can be called as follows:
@@ -107,16 +97,8 @@ sh prepare_osm.sh \
   /path/to/reduced.osm.pbf
 ```
 
-For the specific case the Confluence area in Lyon, this translates into
+*Note that these steps only need to be performed once per use case. Once the OpenStreetMap data has been converted they serve as input to any subsequent model execution.* Concrete examples and data for the Lyon living lab of the LEAD project are given further below.
 
-```bash
-sh prepare_osm.sh \
-  /irtx-jsprit/data/rhone-alpes-latest.osm.pbf \
-  /irtx-jsprit/data/perimeter.poly \
-  /irtx-jsprit/data/scenario.osm.pbf
-```
-
-*Note that these steps only need to be performed once per use case. Once the OpenStreetMap data has been converted they serve as input to any subsequent model execution.*
 
 **Operators**
 
@@ -152,7 +134,10 @@ the operator will deliver (using the available vehicle types) all goods to the
 destinations. In case it is set to `pickup`, each destination will use one of
 the available vehicle types to pick up the delivery. Usually, this clearly leads
 to a much higher number of vehicles and movements (but allows, for instance, the
-representation of common logistics schemes for construction sites today).
+representation of common logistics schemes for construction sites today). Finally,
+the value can be set to `none` indicating that no direct movements from the
+distribution center. This allows, for instance, to construct scenarios in which
+all operations are entirely moved to the a third-party consolidation center.
 
 The *consolidation type* is set to `none` by default. This means that the relations
 between the distribution center and the destinations are handled directly by the
@@ -162,21 +147,13 @@ In case it is set to `pickup`, the receivers will use their defined vehicle type
 to pick up the goods at the UCC. In any case, if any UCC *consolidation type* is
 chosen, the *shipment type* of the operator defines how the goods arrive at the
 UCC in the first place. This means that one can define situations in which the
-operator either delivers the goods to the UCC or the UCC picks up the goods at
-the operator's distribution center.
-
-For the Lyon living lab, two operator files are available in `/scenario_lyon` as
-`rexel.json` and `swoopin.json`. Those are test data sets and don't exactly describe
-the actual demand and distribution centers of the two operators. Respective data
-will be integrated in the final platform.
-
-Additionally, the downstream parcel generation model and its respective
-connector model can be used to generate a parcel shipment operator (`laposte.json`)
-based on synthetic population data.
+operator either delivers the goods to the UCC, the UCC picks up the goods at
+the operator's distribution center, or no interaction between the operator center
+and the UCC is happening.
 
 **Scenario**
 
-Finally, a scenario is described through a `json` file of the following format:
+A scenario is described through a `json` file of the following format:
 
 ```json
 {
@@ -211,10 +188,7 @@ available vehicle types.
 Finally, a list of operators is given. Each operator follows exactly the configuration
 scheme as presented above. One could, hence, manually build a complete scenario
 by copy-pasting the operator information directly into the scenario file. To ease
-the process, a command line-based is provided with the model (see below).
-
-For the Lyon living lab, a scenario template is provided in the LEAD repository
-as `/irtx-jsprit/scenario_lyon/template.json`.
+the process, a command line-based utility is provided alongside the model (see below).
 
 #### Configuration
 
@@ -306,7 +280,7 @@ the Maven build system. For that purpose, one needs to enter the `java` director
 of the LEAD repository and package and call `mvn package`:
 
 ```bash
-cd /irtx/jsprit/java
+cd /irtx-jsprit/java
 mvn package
 ```
 
@@ -315,7 +289,7 @@ the JSprit library and finish without errors. After, the built model should be
 present in
 
 ```
-/irtx/jsprit/java/target/lead-jsprit-1.0.0.jar
+/irtx-jsprit/java/target/lead-jsprit-1.0.0.jar
 ```
 
 The `jar` file can be saved in a fixed location. As long as the model is not
@@ -374,9 +348,54 @@ Parameter             | Values                            | Description
 
 ## Standard scenarios
 
-For the Lyon living lab, some standard scenarios can be run. In each case,
-following the preparational steps from above, the command to run the scenario
-is:
+For the Lyon living lab, some standard scenarios can be run. Initially, the
+preparationl steps need to be performed. After, individual scenarios can
+be evaluated/
+
+### Preparation
+
+**Network**
+
+In the specific
+case for Lyon, the latest snapshot of the Rhône-Alpes region provided by Geofabrik
+can be used:
+
+> https://download.geofabrik.de/europe/france/rhone-alpes.html
+
+For the specific case of Lyon, the perimeter is provided in the `/scenario_lyon` directory
+in the LEAD repository. Hence, the correct `poly` file can be created by calling
+
+```bash
+python3 prepare_perimeter.py \
+  --input-path /irtx-jsprit/scenario_lyon/perimeter.gpkg \
+  --output-path /irtx-jsprit/data/perimeter.poly
+```
+
+This file can be used with `osmosis` to cut the relevant perimter for the Confluence
+study area in Lyon with the resulting file `scenario.osm.pbf`:
+
+```bash
+sh prepare_osm.sh \
+  /irtx-jsprit/data/rhone-alpes-latest.osm.pbf \
+  /irtx-jsprit/data/perimeter.poly \
+  /irtx-jsprit/data/scenario.osm.pbf
+```
+
+**Operator**
+For the Lyon living lab, an operator file is available in `/scenario_lyon` as
+`rexel.json`. This file does not exactly describe the actual demand of the operator.
+Respective data will be integrated in the final platform.
+
+Additionally, the downstream parcel generation model and its respective
+connector model can be used to generate a parcel shipment operator (`laposte_*.json`)
+based on synthetic population data.
+
+### Scenario execution
+
+For the Lyon living lab, a scenario template is provided in the LEAD repository
+as `/irtx-jsprit/scenario_lyon/template.json`. Different configurations based on
+this template are described further below. The resulting configured scenario
+files can then be run using the following command:
 
 ```bash
 java -cp /irtx-jsprit/java/target/lead-jsprit-1.0.0.jar fr.irtx.lead.jsprit.RunSolver \
@@ -392,40 +411,35 @@ the configuration tool:
 **Baseline 2022**
 
 Note that the scenarios from the parcel generation connector should be located
-in `/path/to/parcels` in this example.
+in `/irtx-parcels-to-jsprit/output` in this example.
 
 ```bash
 python3 prepare_scenario.py \
   --scenario-path scenario_lyon/template.json \
   --output-path data/scenario.json \
   --operator-path scenario_lyon/rexel.json \
-  --operator-path scenario_lyon/swoopin.json \
-  --operator-path /path/to/parcels/laposte_2022.json \
+  --operator-path /irtx-parcels-to-jsprit/output/laposte_2022.json \
   --shipment-type:rexel pickup \
-  --shipment-type:swoopin delivery \
   --shipment-type:laposte delivery \
   --consolidation-type:rexel none \
-  --consolidation-type:swoopin none \
   --consolidation-type:laposte none
 ```
 
 **UCC 2022**
 
 In this scenario consolidation is integrated by forcing the deliveries to be routed
-through the UCC. This is done by changing the last three lines.
+through the UCC. The postal distribution center is relcoated to the UCC. This is done
+by changing the last four lines.
 
 ```bash
 python3 prepare_scenario.py \
   --scenario-path scenario_lyon/template.json \
   --output-path data/scenario.json \
   --operator-path scenario_lyon/rexel.json \
-  --operator-path scenario_lyon/swoopin.json \
-  --operator-path /path/to/parcels/laposte_2022.json \
+  --operator-path /irtx-parcels-to-jsprit/output/laposte_2022.json \
   --shipment-type:rexel delivery \
-  --shipment-type:swoopin delivery \
-  --shipment-type:laposte delivery \
+  --shipment-type:laposte none \
   --consolidation-type:rexel delivery \
-  --consolidation-type:swoopin delivery \
   --consolidation-type:laposte delivery
 ```
 
@@ -438,13 +452,10 @@ python3 prepare_scenario.py \
   --scenario-path scenario_lyon/template.json \
   --output-path data/scenario.json \
   --operator-path scenario_lyon/rexel.json \
-  --operator-path scenario_lyon/swoopin.json \
   --operator-path /path/to/parcels/laposte_2030.json \
   --shipment-type:rexel delivery \
-  --shipment-type:swoopin delivery \
-  --shipment-type:laposte delivery \
+  --shipment-type:laposte none \
   --consolidation-type:rexel delivery \
-  --consolidation-type:swoopin delivery \
   --consolidation-type:laposte delivery
 ```
 
@@ -454,3 +465,6 @@ Other scenarios can be constructed by changing parameters in the upstream
 models (total number of parcels, for instance), by replacing the operator
 data sets for other years or even adding new operators, or by changing the
 vehicle parameters.
+
+In the platform a user could, for instance, a list of prepared operator data
+sets that can then be tested in combination using the model.

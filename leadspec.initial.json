@@ -1,0 +1,300 @@
+{
+    "name": "IRTX JSprit Implementation",
+    "description":"The model optimizes routing and fleet costs for a number of operators individually or when using an Urban Consolidation Center",
+    "version": "1.0.0",
+    "status":"draft",
+    "types": [
+        {"name": "Network", "description":"???"}
+    ],
+    "dockerImage":"???",
+    "url": "https://github.com/Horizon-LEAD/irtx-jsprit",
+    "modelData":  [
+        { "comment": "Here starting parameters for prepare_perimeter.py" },
+        {
+            "name": "Perimeter input path",
+            "variableName": "input-path",
+            "description": "Path to the perimeter in geographic format",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "file",
+                "dataType": "file",
+                "extension": "shp|gpkg"
+            }
+        },
+        {
+            "name": "Perimeter output path",
+            "variableName": "output-path",
+            "description": "Path where the converted perimeter file will be saved",
+            "isOutput": "true, but only intermediate step",
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "file",
+                "dataType": "file",
+                "extension": "poly"
+            }
+        },
+        { "comment": "Here starting parameters for prepare_osm.sh" },
+        {
+            "name": "OpenStreetMap data path",
+            "variableName": "{0}",
+            "description": "Path to the OSM data snapshot",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "file",
+                "dataType": "file",
+                "extension": "osm.pbf"
+            }
+        },
+        {
+            "name": "Perimeter definition file",
+            "variableName": "{1}",
+            "description": "Definition of the study area perimeter in POLY format",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "file",
+                "dataType": "file",
+                "extension": "poly"
+            }
+        },
+        {
+            "name": "Cut-out output path",
+            "variableName": "{2}",
+            "description": "Output path where the cut-out of the OSM data will be saved",
+            "isOutput": "true, but only intermediate step",
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "file",
+                "dataType": "file",
+                "extension": "osm.pbf"
+            }
+        },
+        { "comment": "Here starting parameters for prepare_scenario.py" },
+        {
+            "name": "Scenario template input path",
+            "variableName": "scenario-path",
+            "description": "Path to the scenario definition file",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "file",
+                "dataType": "file",
+                "extension": "json"
+            }
+        },
+        {
+            "name": "Scenario output path",
+            "variableName": "output-path",
+            "description": "Path where the configured scenario will be written",
+            "isOutput": "true, but intermediate",
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "file",
+                "dataType": "file",
+                "extension": "json"
+            }
+        },
+        {
+            "name": "Add operator",
+            "variableName": "operator-path",
+            "description": "Adds a new operator to the configuration. Can be called multiple times to integrate multiple operators.",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": true,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "file",
+                "dataType": "file",
+                "extension": "json"
+            }
+        },
+        {
+            "name": "Shipment type per operator",
+            "variableName": "shipment-type:{operator}",
+            "description": "Overrides the shipment type of {operator}",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": true,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "string",
+                "dataType": "string",
+                "allowed values": ["none", "delivery", "pickup"]
+            }
+        },
+        {
+            "name": "Consolidation type per operator",
+            "variableName": "consolidation-type:{operator}",
+            "description": "Overrides the consolidation type of {operator}",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": true,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "string",
+                "dataType": "string",
+                "allowed values": ["none", "delivery", "pickup"]
+            }
+        },
+        {
+            "name": "Set a vehicle type property",
+            "variableName": "consolidation-type:{vehicle_type}:{property}",
+            "description": "Overrides the value of {property} of vehicle type {vehicle_type}",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": true,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "string",
+                "dataType": "string",
+            }
+        },
+        { "comment": "Here starting parameters for lead-jsprit-1.0.0.jar" },
+        {
+            "name": "Input problem path",
+            "variableName": "problem-path",
+            "description": "Path to the configured scenario file",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "file",
+                "dataType": "file",
+                "extension": "json"
+            }
+        },
+        {
+            "name": "Output solution path",
+            "variableName": "solution-path",
+            "description": "Path where the solution will be saved",
+            "isOutput": true,
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "file",
+                "dataType": "file",
+                "extension": "json"
+            }
+        },
+        {
+            "name": "Coordinate Reference System",
+            "variableName": "crs",
+            "description": "CRS that should be used for the scenario, for instance, to calculate Euclidean distances in the optimization",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "string",
+                "dataType": "string",
+                "regex": "EPSG:[0-9]+"
+            }
+        },
+        {
+            "name": "OpenStreetMap data path",
+            "variableName": "osm-path",
+            "description": "Path to the OSM data that should be used for routing",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "file",
+                "dataType": "file",
+                "extension": "osm.pbf"
+            }
+        },
+        {
+            "name": "Freespeed factor",
+            "variableName": "freespeed-factor",
+            "description": "Factor that modulates the free speeds derived from OSM",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "float",
+                "dataType": "float",
+                "range": [0.0, Inf]
+            }
+        },
+        {
+            "name": "Random seed",
+            "variableName": "random-seed",
+            "description": "Random seed that should be used",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": true,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "int",
+                "dataType": "int",
+            }
+        },
+        {
+            "name": "Iterations",
+            "variableName": "iterations",
+            "description": "Maximum iterations to solve the problem",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": true,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "int",
+                "dataType": "int",
+                "range": [0, Inf]
+            }
+        },
+        {
+            "name": "Threads",
+            "variableName": "threads",
+            "description": "Number of threads to be used",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "int",
+                "dataType": "int",
+                "range": [0, Inf]
+            }
+        }
+    ]
+}
