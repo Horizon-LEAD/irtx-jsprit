@@ -6,6 +6,7 @@
 - Generate the standard cases for downstream testing
 
 - Test that all of this works smoothly with the provided data
+- Provide proper configuration for costs
 
 ## Introduction
 
