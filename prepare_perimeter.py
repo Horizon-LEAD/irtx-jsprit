@@ -1,5 +1,5 @@
 import geopandas as gpd
-import os
+import os, argparse
 
 ### Command line
 parser = argparse.ArgumentParser(description = "Convert OSM perimeter for osmosis")
