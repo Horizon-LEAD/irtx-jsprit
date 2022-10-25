@@ -293,7 +293,7 @@ present in
 ```
 
 The `jar` file can be saved in a fixed location. As long as the model is not
-changed, it can be reused for multiple model runs. To test wether the `jar` has
+changed, it can be reused for multiple model runs. To test whether the `jar` has
 been build successfully, call
 
 ```bash
