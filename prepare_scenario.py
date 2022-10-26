@@ -9,6 +9,7 @@ operator_paths = []
 
 shipment_types = {}
 consolidation_types = {}
+salaries = {}
 
 vehicle_type_properties = []
 
@@ -70,6 +71,17 @@ while k < len(arguments):
 
         consolidation_types[operator] = consolidation_type
         print("Consolidation type", consolidation_type, "for", operator)
+
+    elif arguments[k].startswith("--driver-salary:"):
+        operator = arguments[k].split(":")[1]
+        k += 1
+
+        if k == len(arguments):
+            raise RuntimeError("Need to provide driver salary for {}".format(operator))
+
+        salary = float(arguments[k])
+        salaries[operator] = salary
+        print("Salary ", salary, "EUR for", operator)
 
     elif arguments[k].startswith("--vehicle-type:"):
         vehicle_type, property = arguments[k].split(":")[1:]
@@ -134,6 +146,14 @@ for operator_id, consolidation_type in consolidation_types.items():
     for operator in scenario["operators"]:
         if operator["id"] == operator_id:
             operator["consolidation_type"] = consolidation_type
+
+for operator_id, salary in salaries.items():
+    if not operator_id in operator_ids:
+        raise RuntimeError("Salary given for non-existing operator", operator)
+
+    for operator in scenario["operators"]:
+        if operator["id"] == operator_id:
+            operator["daily_driver_salary_EUR"] = salary
 
 ### Update vehicle type properties
 vehicle_type_ids = set([vt["id"] for vt in scenario["vehicle_types"]])

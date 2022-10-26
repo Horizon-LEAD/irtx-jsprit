@@ -224,6 +224,7 @@ Parameter             | Values                            | Description
 `--operator-path`         | String             | Integrates a new operator defined in a `json` file into the scenario. *Can be set multiple times to integrate multiple operators.*
 `--shipment-type:{operator}`         | `delivery`* or `pickup`             | Sets the shipment type for operator `{operator}` (see above)
 `--consolidation-type:{operator}`             | `none`* or `delivery` or `pickup`              | Sets the consolidation type for operator `{operator}` (see above)
+`--driver-salary:{operator}`             | Real              | Sets the daily salary per driver in EUR
 `--vehicle-type:{vt}:{property}`             | Any              | Sets a property of vehicle type `{vt}`, for instance `speed_km_h`
 
 Concrete use cases for the utility in the context of the Lyon living lab will be
