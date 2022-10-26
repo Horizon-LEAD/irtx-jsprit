@@ -303,7 +303,9 @@ public class LEADSolver {
 			}
 		}
 
-		solutionData.ucc.costPerShipment_EUR = solutionData.ucc.cost_EUR / solutionData.ucc.shipments;
+		if (solutionData.ucc.shipments > 0) {
+			solutionData.ucc.costPerShipment_EUR = solutionData.ucc.cost_EUR / solutionData.ucc.shipments;
+		}
 
 		// Operator Characteristics
 		for (OperatorData operatorData : problemData.operators) {
@@ -312,12 +314,13 @@ public class LEADSolver {
 			for (RouteData routeData : solutionData.routes) {
 				if (routeData.carrierId.equals(operatorData.id)) {
 					operatorSolutionData.cost_EUR += routeData.cost_EUR;
-					operatorSolutionData.shipments += operatorData.demand.size();
 				}
 			}
 
 			int uccShipmentsForOperator = uccShipments.getOrDefault(operatorData.id, 0);
 			operatorSolutionData.cost_EUR += uccShipmentsForOperator * solutionData.ucc.costPerShipment_EUR;
+
+			operatorSolutionData.shipments += operatorData.demand.size();
 			operatorSolutionData.costPerShipment_EUR = operatorSolutionData.cost_EUR / operatorSolutionData.shipments;
 
 			solutionData.operators.put(operatorData.id, operatorSolutionData);
