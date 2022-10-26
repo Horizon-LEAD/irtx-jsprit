@@ -411,7 +411,7 @@ the configuration tool:
 
 **Baseline 2022**
 
-Note that the scenarios from the parcel generation connector should be located
+Note that the output from the parcel generation connector should be located
 in `/irtx-parcels-to-jsprit/output` in this example.
 
 ```bash
@@ -423,8 +423,12 @@ python3 prepare_scenario.py \
   --shipment-type:rexel pickup \
   --shipment-type:laposte delivery \
   --consolidation-type:rexel none \
-  --consolidation-type:laposte none
+  --consolidation-type:laposte none \
+  --driver-salary:rexel 0.0
 ```
+
+The driver salary for Rexel is put to zero, because it is a pick-up service,
+which means that employees are employed independent of their pick-up tasks.
 
 **UCC 2022**
 
@@ -443,6 +447,9 @@ python3 prepare_scenario.py \
   --consolidation-type:rexel delivery \
   --consolidation-type:laposte delivery
 ```
+
+In this example, Rexel needs a driver, so the salary is kept at its default
+value.
 
 **UCC 2030**
 
