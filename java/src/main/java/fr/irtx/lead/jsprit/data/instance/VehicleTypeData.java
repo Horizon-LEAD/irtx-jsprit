@@ -32,4 +32,7 @@ public class VehicleTypeData {
 
 	@JsonProperty("delivery_duration")
 	public double deliveryDuration = 120.0;
+
+	@JsonProperty("active_time")
+	public double activeTime = 8.0 * 3600.0;
 }

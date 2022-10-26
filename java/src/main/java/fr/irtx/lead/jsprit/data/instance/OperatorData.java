@@ -23,10 +23,4 @@ public class OperatorData {
 
 	@JsonProperty("consolidation_type")
 	public ShipmentType consolidationType = ShipmentType.delivery;
-
-	@JsonProperty("service_start_time")
-	public double serviceStartTime = 5 * 3600.0;
-
-	@JsonProperty("service_end_time")
-	public double serviceEndTime = 22.0 * 3600.0;
 }

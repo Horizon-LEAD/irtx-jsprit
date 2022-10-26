@@ -11,10 +11,4 @@ public class UCCData {
 
 	@JsonProperty("vehicle_types")
 	public List<String> vehicleTypeIds = new LinkedList<>();
-
-	@JsonProperty("service_start_time")
-	public double serviceStartTime;
-
-	@JsonProperty("service_end_time")
-	public double serviceEndTime;
 }

@@ -26,7 +26,6 @@ import com.graphhopper.jsprit.core.problem.VehicleRoutingProblem.FleetSize;
 import com.graphhopper.jsprit.core.problem.job.Shipment;
 import com.graphhopper.jsprit.core.problem.solution.VehicleRoutingProblemSolution;
 import com.graphhopper.jsprit.core.problem.solution.route.VehicleRoute;
-import com.graphhopper.jsprit.core.problem.solution.route.activity.TimeWindow;
 import com.graphhopper.jsprit.core.problem.solution.route.activity.TourActivity;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleImpl;
 import com.graphhopper.jsprit.core.problem.vehicle.VehicleType;
@@ -103,10 +102,11 @@ public class LEADSolver {
 				List<VehicleTypeData> vehicleTypes = operator.vehicleTypeIds.stream()
 						.map(vtid -> vehicleTypeMap.get(vtid)).collect(Collectors.toList());
 
-				problems.add(new PartialProblem(problemId,
-						generateProblem(problemId, hubLocation, Collections.emptyList(), deliveryLocations,
-								vehicleTypes, operator.serviceStartTime, operator.serviceEndTime, problemData),
-						CarrierType.sender, operator.id));
+				problems.add(
+						new PartialProblem(
+								problemId, generateProblem(problemId, hubLocation, Collections.emptyList(),
+										deliveryLocations, vehicleTypes, problemData),
+								CarrierType.sender, operator.id));
 			}
 		}
 
@@ -134,10 +134,8 @@ public class LEADSolver {
 					List<VehicleTypeData> vehicleTypes = operator.vehicleTypeIds.stream()
 							.map(vtid -> vehicleTypeMap.get(vtid)).collect(Collectors.toList());
 
-					problems.add(new PartialProblem(problemId,
-							generateProblem(problemId, hubLocation, pickupLocations, Collections.emptyList(),
-									vehicleTypes, operator.serviceStartTime, operator.serviceEndTime, problemData),
-							CarrierType.receiver, operator.id));
+					problems.add(new PartialProblem(problemId, generateProblem(problemId, hubLocation, pickupLocations,
+							Collections.emptyList(), vehicleTypes, problemData), CarrierType.receiver, operator.id));
 				}
 			}
 		}
@@ -170,10 +168,8 @@ public class LEADSolver {
 				List<VehicleTypeData> vehicleTypes = problemData.ucc.vehicleTypeIds.stream()
 						.map(vtid -> vehicleTypeMap.get(vtid)).collect(Collectors.toList());
 
-				problems.add(new PartialProblem(
-						problemId, generateProblem(problemId, hubLocation, pickupLocations, deliveryLocations,
-								vehicleTypes, ucc.serviceStartTime, ucc.serviceEndTime, problemData),
-						CarrierType.ucc, "$ucc$"));
+				problems.add(new PartialProblem(problemId, generateProblem(problemId, hubLocation, pickupLocations,
+						deliveryLocations, vehicleTypes, problemData), CarrierType.ucc, "$ucc$"));
 			}
 		}
 
@@ -287,8 +283,7 @@ public class LEADSolver {
 	}
 
 	private VehicleRoutingProblem generateProblem(String id, Location hubLocation, List<Location> pickupLocations,
-			List<Location> deliveryLocations, List<VehicleTypeData> vehicleTypes, double serviceStartTime,
-			double serviceEndTime, ProblemData problemData) {
+			List<Location> deliveryLocations, List<VehicleTypeData> vehicleTypes, ProblemData problemData) {
 		// Generate shipments
 		List<Shipment> shipments = new ArrayList<>(pickupLocations.size() + deliveryLocations.size());
 
@@ -297,8 +292,10 @@ public class LEADSolver {
 					.setPickupLocation(pickupLocations.get(i)) //
 					.setDeliveryLocation(hubLocation) //
 					.addSizeDimension(SIZE_INDEX, 1) //
-					// .setPickupTimeWindow(TimeWindow.newInstance(serviceStartTime, serviceEndTime)) // TODO
-					// .setDeliveryTimeWindow(TimeWindow.newInstance(serviceStartTime, serviceEndTime)) // TODO
+					// .setPickupTimeWindow(TimeWindow.newInstance(serviceStartTime,
+					// serviceEndTime)) //
+					// .setDeliveryTimeWindow(TimeWindow.newInstance(serviceStartTime,
+					// serviceEndTime)) //
 					.build());
 		}
 
@@ -307,8 +304,10 @@ public class LEADSolver {
 					.setPickupLocation(hubLocation) //
 					.setDeliveryLocation(deliveryLocations.get(i)) //
 					.addSizeDimension(SIZE_INDEX, 1) //
-					// .setPickupTimeWindow(TimeWindow.newInstance(serviceStartTime, serviceEndTime)) // TODO
-					// .setDeliveryTimeWindow(TimeWindow.newInstance(serviceStartTime, serviceEndTime)) // TODO
+					// .setPickupTimeWindow(TimeWindow.newInstance(serviceStartTime,
+					// serviceEndTime)) //
+					// .setDeliveryTimeWindow(TimeWindow.newInstance(serviceStartTime,
+					// serviceEndTime)) //
 					.build());
 		}
 
@@ -327,6 +326,8 @@ public class LEADSolver {
 
 			vehicles.add(VehicleImpl.Builder.newInstance(vehicleType.getTypeId()) //
 					.setStartLocation(hubLocation) //
+					.setEarliestStart(0.0) //
+					.setLatestArrival(vehicleTypeData.activeTime) //
 					.setEndLocation(hubLocation) //
 					.setReturnToDepot(true) //
 					.setType(vehicleType) //
