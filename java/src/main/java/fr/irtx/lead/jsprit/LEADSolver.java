@@ -41,6 +41,7 @@ import fr.irtx.lead.jsprit.data.instance.VehicleTypeData;
 import fr.irtx.lead.jsprit.data.solution.RouteData;
 import fr.irtx.lead.jsprit.data.solution.RouteData.CarrierType;
 import fr.irtx.lead.jsprit.data.solution.SolutionData;
+import fr.irtx.lead.jsprit.data.solution.SolutionData.OperatorSolutionData;
 import fr.irtx.lead.jsprit.infrastructure.InfrastructureManager;
 import fr.irtx.lead.jsprit.vehicles.CustomVehicleRoutingActivityCosts;
 
@@ -105,7 +106,7 @@ public class LEADSolver {
 				problems.add(new PartialProblem(problemId,
 						generateProblem(problemId, hubLocation, Collections.emptyList(), deliveryLocations,
 								vehicleTypes, problemData, operator.dailyDriverSalary_EUR),
-						CarrierType.sender, operator.id, operator.dailyDriverSalary_EUR));
+						CarrierType.sender, operator.id, operator.dailyDriverSalary_EUR, Collections.emptyMap()));
 			}
 		}
 
@@ -136,7 +137,7 @@ public class LEADSolver {
 					problems.add(new PartialProblem(problemId,
 							generateProblem(problemId, hubLocation, pickupLocations, Collections.emptyList(),
 									vehicleTypes, problemData, operator.dailyDriverSalary_EUR),
-							CarrierType.receiver, operator.id, operator.dailyDriverSalary_EUR));
+							CarrierType.receiver, operator.id, operator.dailyDriverSalary_EUR, Collections.emptyMap()));
 				}
 			}
 		}
@@ -149,16 +150,20 @@ public class LEADSolver {
 			List<Location> pickupLocations = new LinkedList<>();
 			List<Location> deliveryLocations = new LinkedList<>();
 
+			Map<String, Integer> shipments = new HashMap<>();
+
 			for (OperatorData operator : problemData.operators) {
 				for (int receiverIndex = 0; receiverIndex < operator.demand.size(); receiverIndex++) {
 					if (operator.shipmentType.equals(ShipmentType.pickup)
 							&& !operator.consolidationType.equals(ShipmentType.none)) {
 						pickupLocations.add(infrastructure.getLocation(senderLocationId(operator), operator.center));
+						shipments.compute(operator.id, (id, value) -> value == null ? 1 : value + 1);
 					}
 
 					if (operator.consolidationType.equals(ShipmentType.delivery)) {
 						deliveryLocations.add(infrastructure.getLocation(receiverLocationId(operator, receiverIndex),
 								operator.demand.get(receiverIndex)));
+						shipments.compute(operator.id, (id, value) -> value == null ? 1 : value + 1);
 					}
 				}
 			}
@@ -172,7 +177,7 @@ public class LEADSolver {
 				problems.add(new PartialProblem(problemId,
 						generateProblem(problemId, hubLocation, pickupLocations, deliveryLocations, vehicleTypes,
 								problemData, ucc.dailyDriverSalary_EUR),
-						CarrierType.ucc, "$ucc$", ucc.dailyDriverSalary_EUR));
+						CarrierType.ucc, "$ucc$", ucc.dailyDriverSalary_EUR, shipments));
 			}
 		}
 
@@ -282,6 +287,42 @@ public class LEADSolver {
 		double solutionEndTime = System.nanoTime();
 		solutionData.runtime_s = 1e-9 * (solutionEndTime - solutionStartTime);
 
+		// UCC Characteristics
+		Map<String, Integer> uccShipments = new HashMap<>();
+
+		for (PartialProblem problem : problems) {
+			if (problem.carrierType.equals(CarrierType.ucc)) {
+				solutionData.ucc.shipments = problem.shipments.values().stream().mapToInt(i -> i).sum();
+				uccShipments = problem.shipments;
+			}
+		}
+
+		for (RouteData routeData : solutionData.routes) {
+			if (routeData.carrierType.equals(CarrierType.ucc)) {
+				solutionData.ucc.cost_EUR += routeData.cost_EUR;
+			}
+		}
+
+		solutionData.ucc.costPerShipment_EUR = solutionData.ucc.cost_EUR / solutionData.ucc.shipments;
+
+		// Operator Characteristics
+		for (OperatorData operatorData : problemData.operators) {
+			OperatorSolutionData operatorSolutionData = new OperatorSolutionData();
+
+			for (RouteData routeData : solutionData.routes) {
+				if (routeData.carrierId.equals(operatorData.id)) {
+					operatorSolutionData.cost_EUR += routeData.cost_EUR;
+					operatorSolutionData.shipments += operatorData.demand.size();
+				}
+			}
+
+			int uccShipmentsForOperator = uccShipments.getOrDefault(operatorData.id, 0);
+			operatorSolutionData.cost_EUR += uccShipmentsForOperator * solutionData.ucc.costPerShipment_EUR;
+			operatorSolutionData.costPerShipment_EUR = operatorSolutionData.cost_EUR / operatorSolutionData.shipments;
+
+			solutionData.operators.put(operatorData.id, operatorSolutionData);
+		}
+
 		return solutionData;
 	}
 
@@ -356,15 +397,18 @@ public class LEADSolver {
 		String problemId;
 		CarrierType carrierType;
 		String carrierId;
+
 		double dailyDriverSalary_EUR;
+		Map<String, Integer> shipments = new HashMap<>();
 
 		PartialProblem(String problemId, VehicleRoutingProblem vrp, CarrierType carrierType, String carrierId,
-				double dailyDriverSalary_EUR) {
+				double dailyDriverSalary_EUR, Map<String, Integer> shipments) {
 			this.vrp = vrp;
 			this.problemId = problemId;
 			this.carrierId = carrierId;
 			this.carrierType = carrierType;
 			this.dailyDriverSalary_EUR = dailyDriverSalary_EUR;
+			this.shipments = shipments;
 		}
 	}
 
