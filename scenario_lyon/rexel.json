@@ -4,6 +4,7 @@
   "vehicle_types": ["van"],
   "shipment_type": "delivery",
   "consolidation_type": "delivery",
+  "daily_driver_salary_EUR": 136.0,
   "demand": [
     { "lat": 45.741027039982164, "lng": 4.815560041895171 },
     { "lat": 45.74068394155203, "lng": 4.8162850580056515 },

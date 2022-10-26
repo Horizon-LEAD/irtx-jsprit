@@ -11,4 +11,7 @@ public class UCCData {
 
 	@JsonProperty("vehicle_types")
 	public List<String> vehicleTypeIds = new LinkedList<>();
+
+	@JsonProperty("daily_driver_salary_EUR")
+	public double dailyDriverSalary_EUR = 0.0;
 }

@@ -102,11 +102,10 @@ public class LEADSolver {
 				List<VehicleTypeData> vehicleTypes = operator.vehicleTypeIds.stream()
 						.map(vtid -> vehicleTypeMap.get(vtid)).collect(Collectors.toList());
 
-				problems.add(
-						new PartialProblem(
-								problemId, generateProblem(problemId, hubLocation, Collections.emptyList(),
-										deliveryLocations, vehicleTypes, problemData),
-								CarrierType.sender, operator.id));
+				problems.add(new PartialProblem(problemId,
+						generateProblem(problemId, hubLocation, Collections.emptyList(), deliveryLocations,
+								vehicleTypes, problemData, operator.dailyDriverSalary_EUR),
+						CarrierType.sender, operator.id, operator.dailyDriverSalary_EUR));
 			}
 		}
 
@@ -134,8 +133,10 @@ public class LEADSolver {
 					List<VehicleTypeData> vehicleTypes = operator.vehicleTypeIds.stream()
 							.map(vtid -> vehicleTypeMap.get(vtid)).collect(Collectors.toList());
 
-					problems.add(new PartialProblem(problemId, generateProblem(problemId, hubLocation, pickupLocations,
-							Collections.emptyList(), vehicleTypes, problemData), CarrierType.receiver, operator.id));
+					problems.add(new PartialProblem(problemId,
+							generateProblem(problemId, hubLocation, pickupLocations, Collections.emptyList(),
+									vehicleTypes, problemData, operator.dailyDriverSalary_EUR),
+							CarrierType.receiver, operator.id, operator.dailyDriverSalary_EUR));
 				}
 			}
 		}
@@ -168,8 +169,10 @@ public class LEADSolver {
 				List<VehicleTypeData> vehicleTypes = problemData.ucc.vehicleTypeIds.stream()
 						.map(vtid -> vehicleTypeMap.get(vtid)).collect(Collectors.toList());
 
-				problems.add(new PartialProblem(problemId, generateProblem(problemId, hubLocation, pickupLocations,
-						deliveryLocations, vehicleTypes, problemData), CarrierType.ucc, "$ucc$"));
+				problems.add(new PartialProblem(problemId,
+						generateProblem(problemId, hubLocation, pickupLocations, deliveryLocations, vehicleTypes,
+								problemData, ucc.dailyDriverSalary_EUR),
+						CarrierType.ucc, "$ucc$", ucc.dailyDriverSalary_EUR));
 			}
 		}
 
@@ -264,7 +267,7 @@ public class LEADSolver {
 				routeData.energy_kWh = routeData.distance_km * vehicleTypeData.energy_per_km_Wh * 1e-3;
 
 				routeData.cost_EUR = routeData.distance_km *= vehicleTypeData.costPerKm_EUR;
-				routeData.cost_EUR += vehicleTypeData.costPerDay_EUR;
+				routeData.cost_EUR += vehicleTypeData.costPerDay_EUR + problem.dailyDriverSalary_EUR;
 			}
 
 			synchronized (solutionData) {
@@ -283,7 +286,8 @@ public class LEADSolver {
 	}
 
 	private VehicleRoutingProblem generateProblem(String id, Location hubLocation, List<Location> pickupLocations,
-			List<Location> deliveryLocations, List<VehicleTypeData> vehicleTypes, ProblemData problemData) {
+			List<Location> deliveryLocations, List<VehicleTypeData> vehicleTypes, ProblemData problemData,
+			double dailyDriverSalary_EUR) {
 		// Generate shipments
 		List<Shipment> shipments = new ArrayList<>(pickupLocations.size() + deliveryLocations.size());
 
@@ -321,7 +325,7 @@ public class LEADSolver {
 					.setCostPerDistance(vehicleTypeData.costPerKm_EUR * 1e-3) //
 					.setCostPerTransportTime(0.0) //
 					.setCostPerServiceTime(0.0) //
-					.setFixedCost(vehicleTypeData.costPerDay_EUR) //
+					.setFixedCost(vehicleTypeData.costPerDay_EUR + dailyDriverSalary_EUR) //
 					.build();
 
 			vehicles.add(VehicleImpl.Builder.newInstance(vehicleType.getTypeId()) //
@@ -352,12 +356,15 @@ public class LEADSolver {
 		String problemId;
 		CarrierType carrierType;
 		String carrierId;
+		double dailyDriverSalary_EUR;
 
-		PartialProblem(String problemId, VehicleRoutingProblem vrp, CarrierType carrierType, String carrierId) {
+		PartialProblem(String problemId, VehicleRoutingProblem vrp, CarrierType carrierType, String carrierId,
+				double dailyDriverSalary_EUR) {
 			this.vrp = vrp;
 			this.problemId = problemId;
 			this.carrierId = carrierId;
 			this.carrierType = carrierType;
+			this.dailyDriverSalary_EUR = dailyDriverSalary_EUR;
 		}
 	}
 

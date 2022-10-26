@@ -23,4 +23,7 @@ public class OperatorData {
 
 	@JsonProperty("consolidation_type")
 	public ShipmentType consolidationType = ShipmentType.delivery;
+
+	@JsonProperty("dailyDriverSalary_EUR")
+	public double dailyDriverSalary_EUR = 0.0;
 }
