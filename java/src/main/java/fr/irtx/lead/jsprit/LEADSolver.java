@@ -277,11 +277,14 @@ public class LEADSolver {
 
 			synchronized (solutionData) {
 				solutionData.objective += solution.getCost();
-				solutionData.routes.forEach(solutionData::accumulate);
 			}
 
 			currentProblems.incrementAndGet();
 			observer.update(currentProblems.get(), totalProblems, currentIterations.get(), totalIterations);
+		}
+
+		synchronized (solutionData) {
+			solutionData.routes.forEach(solutionData::accumulate);
 		}
 
 		double solutionEndTime = System.nanoTime();
