@@ -1,12 +1,5 @@
 # IRTX JSprit Implementation
 
-## TODO
-
-- Provide static input to INLECOM (so no need to run upstream models for testing)
-- Generate the standard cases for downstream testing
-
-- Test that all of this works smoothly with the provided data
-
 ## Introduction
 
 The JSprit model makes use of the open-source route optimization library
@@ -42,6 +35,8 @@ Routing-based costs are either approximated using Euclidean distance or calculat
 To run the model, the environment needs to be prepared:
 
 - A `conda` or `mamba` environment needs to be set up in which the Python code of the model is run. The LEAD repository provides `environment.yml` which describes the `conda` environment and all dependencies.
+
+- Note that some of the dependencies installed via `conda > pip` need a recent compiler available on the system. Additionally, the MATSim instances that are run in the pipeline need to have access to the fonts available on the system. On an Ubunutu system, it suffices to `apt install build-essential fontconfig`.
 
 - A `Java` runtime needs to be present on the executing machine. It is recommended to set up an **Adoptium OpenJDK 11** (https://adoptium.net).
 
