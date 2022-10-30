@@ -259,11 +259,10 @@ public class LEADSolver {
 								route.getVehicle()) * 1e-3;
 					}
 
-					if (activity.getLocation() != previousLocation) {
-						routeData.trajectory
-								.add(TrajectoryData.of(infrastructure.getLocationData(activity.getLocation()),
-										activity.getArrTime(), activity.getEndTime(), activity.getName()));
-					}
+					// if (activity.getLocation() != previousLocation) {
+					routeData.trajectory.add(TrajectoryData.of(infrastructure.getLocationData(activity.getLocation()),
+							activity.getArrTime(), activity.getEndTime(), activity.getName()));
+					// }
 
 					previousActivity = activity;
 					previousLocation = activity.getLocation();
