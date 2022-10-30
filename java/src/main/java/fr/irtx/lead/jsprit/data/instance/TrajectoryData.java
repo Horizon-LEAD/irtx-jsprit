@@ -9,14 +9,22 @@ public class TrajectoryData {
 	@JsonProperty("lng")
 	public double longitude;
 
-	@JsonProperty("t")
-	public double time;
+	@JsonProperty("t0")
+	public double startTime;
 
-	static public TrajectoryData of(LocationData location, double time) {
+	@JsonProperty("t1")
+	public double endTime;
+
+	@JsonProperty("type")
+	public String type;
+
+	static public TrajectoryData of(LocationData location, double startTime, double endTime, String type) {
 		TrajectoryData item = new TrajectoryData();
 		item.latitude = location.latitude;
 		item.longitude = location.longitude;
-		item.time = time;
+		item.startTime = startTime;
+		item.endTime = endTime;
+		item.type = type;
 		return item;
 	}
 }

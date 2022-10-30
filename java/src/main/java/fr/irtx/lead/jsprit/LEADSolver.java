@@ -260,8 +260,9 @@ public class LEADSolver {
 					}
 
 					if (activity.getLocation() != previousLocation) {
-						routeData.trajectory.add(TrajectoryData
-								.of(infrastructure.getLocationData(activity.getLocation()), activity.getArrTime()));
+						routeData.trajectory
+								.add(TrajectoryData.of(infrastructure.getLocationData(activity.getLocation()),
+										activity.getArrTime(), activity.getEndTime(), activity.getName()));
 					}
 
 					previousActivity = activity;
