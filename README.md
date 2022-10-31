@@ -161,7 +161,8 @@ A scenario is described through a `json` file of the following format:
       "co2_per_km_g" : 130.0,
       "energy_per_km_Wh" : 120.0,
       "speed_km_h": 40.0,
-      "euclidean_distance_factor": 1.3
+      "euclidean_distance_factor": 1.3,
+      "active_time": 28800.0
     }
   ],
   "ucc": {
@@ -176,7 +177,8 @@ On top, multiple vehicle types with individual identifiers can be defined that
 differ in their capacity (number of items that can be carried), their cost
 structure, emissions, energy consumption, and speed. The `euclidean_distance_factor`
 is added to any distance in case the model is run *without* specific network data
-(see below). After, the characteristics
+(see below). The `active_time` parameter defines within which time limit (usually
+one work day, the vehicle can operatate). After, the characteristics
 of the `ucc` are defined by defining a location in latitude and longitude and its
 available vehicle types.
 
