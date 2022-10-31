@@ -295,6 +295,21 @@
                 "dataType": "int",
                 "range": [0, Inf]
             }
+        },
+        {
+            "name": "Memory",
+            "variableName": "Xmx",
+            "description": "Memory available to Java",
+            "isOutput": false,
+            "isOutputDir": false,
+            "isOptional": false,
+            "inputType": "CLI",
+            "chartType": "NONE",
+            "modelDataType": {
+                "name": "str",
+                "dataType": "str",
+                "regex": "[0-9]+[MG]"
+            }
         }
     ]
 }

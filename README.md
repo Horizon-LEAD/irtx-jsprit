@@ -305,7 +305,7 @@ which should respond by the message `It works!`.
 Once the model is built, it can be called the following way:
 
 ```bash
-java -cp /path/to/lead-jsprit-1.0.0.jar fr.irtx.lead.jsprit.RunSolver \
+java -Xmx12g -cp /path/to/lead-jsprit-1.0.0.jar fr.irtx.lead.jsprit.RunSolver \
   --problem-path /path/to/scenario.json \
   --solution-path /path/to/solution.json \
   --crs EPSG:2154 \
@@ -343,6 +343,8 @@ Parameter             | Values                            | Description
 `--random-seed`       | Integer (default `1234`)          | Allows to perform ensemble runs by providing different initialization seeds of the optimization
 `--iterations`        | Integer (default `10000`)         | Sets the number of iterations per operator with higher accuracy with increasing values (but also higher runtime)
 `--threads`           | Integer (default `1`)             | Allows to set the number of threads that are used for the optimization
+
+Note that the memory available to Java can be configured using the `-Xmx` option and by appending a size of the format `1024M` to define the amount in megabytes or `20G` to define the amount in gigabytes.
 
 ## Standard scenarios
 
