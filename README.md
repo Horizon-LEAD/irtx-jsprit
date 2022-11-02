@@ -271,7 +271,7 @@ be `$ucc$` to indicate that the vehicle is operated by the UCC. Finally, a
 detailed trajectory of the vehicle including coordinates and timestamps is
 given.
 
-# Building the model
+## Building the model
 
 The model is provided as Java code. To run it, it first needs to be built using
 the Maven build system. For that purpose, one needs to enter the `java` directory
@@ -300,7 +300,7 @@ java -cp /irtx-jsprit/java/target/lead-jsprit-1.0.0.jar fr.irtx.lead.jsprit.RunV
 
 which should respond by the message `It works!`.
 
-# Running the model
+## Running the model
 
 Once the model is built, it can be called the following way:
 
