@@ -1,5 +1,12 @@
 set -e
 
+## Prepare
+cd /home/ubuntu/irtx-jsprit
+mkdir /home/ubuntu/irtx-jsprit/output
+
+## Create environment
+conda create -f environment.yml -n jsprit
+
 ## Activate environment
 conda activate jsprit
 
