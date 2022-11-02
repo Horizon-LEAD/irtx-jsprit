@@ -295,7 +295,7 @@ changed, it can be reused for multiple model runs. To test whether the `jar` has
 been build successfully, call
 
 ```bash
-java -cp /path/to/lead-jsprit-1.0.0.jar fr.irtx.lead.jsprit.RunVerification
+java -cp /irtx-jsprit/java/target/lead-jsprit-1.0.0.jar fr.irtx.lead.jsprit.RunVerification
 ```
 
 which should respond by the message `It works!`.
@@ -305,7 +305,7 @@ which should respond by the message `It works!`.
 Once the model is built, it can be called the following way:
 
 ```bash
-java -Xmx12g -cp /path/to/lead-jsprit-1.0.0.jar fr.irtx.lead.jsprit.RunSolver \
+java -Xmx12g -cp /irtx-jsprit/java/target/lead-jsprit-1.0.0.jar fr.irtx.lead.jsprit.RunSolver \
   --problem-path /path/to/scenario.json \
   --solution-path /path/to/solution.json \
   --crs EPSG:2154 \
@@ -346,10 +346,12 @@ Parameter             | Values                            | Description
 
 Note that the memory available to Java can be configured using the `-Xmx` option and by appending a size of the format `1024M` to define the amount in megabytes or `20G` to define the amount in gigabytes.
 
+For test runs, it is recommended to divert from the standard value of `10000` iterations that is configured. Values like `1000` or `2000` will give results much quicker.
+
 ## Standard scenarios
 
 For the Lyon living lab, some standard scenarios can be run. Initially, the
-preparationl steps need to be performed. After, individual scenarios can
+preparation steps need to be performed. After, individual scenarios can
 be evaluated/
 
 ### Preparation
@@ -362,13 +364,13 @@ can be used:
 
 > https://download.geofabrik.de/europe/france/rhone-alpes.html
 
-For the specific case of Lyon, the perimeter is provided in the `/scenario_lyon` directory
+For the specific case of Lyon, the perimeter is provided in the `data` directory
 in the LEAD repository. Hence, the correct `poly` file can be created by calling
 
 ```bash
 python3 prepare_perimeter.py \
-  --input-path /irtx-jsprit/scenario_lyon/perimeter.gpkg \
-  --output-path /irtx-jsprit/data/perimeter.poly
+  --input-path /irtx-jsprit/data/perimeter_lyon.gpkg \
+  --output-path /irtx-jsprit/output/perimeter_lyon.poly
 ```
 
 This file can be used with `osmosis` to cut the relevant perimter for the Confluence
@@ -376,14 +378,14 @@ study area in Lyon with the resulting file `scenario.osm.pbf`:
 
 ```bash
 sh prepare_osm.sh \
-  /irtx-jsprit/data/rhone-alpes-latest.osm.pbf \
-  /irtx-jsprit/data/perimeter.poly \
-  /irtx-jsprit/data/scenario.osm.pbf
+  /irtx-jsprit/input/rhone-alpes-latest.osm.pbf \
+  /irtx-jsprit/output/perimeter.poly \
+  /irtx-jsprit/output/scenario.osm.pbf
 ```
 
 **Operator**
-For the Lyon living lab, an operator file is available in `/scenario_lyon` as
-`rexel.json`. This file does not exactly describe the actual demand of the operator.
+For the Lyon living lab, an operator file is available in `data` as
+`rexel_lyon.json`. This file does not exactly describe the actual demand of the operator.
 Respective data will be integrated in the final platform.
 
 Additionally, the downstream parcel generation model and its respective
@@ -393,32 +395,30 @@ based on synthetic population data.
 ### Scenario execution
 
 For the Lyon living lab, a scenario template is provided in the LEAD repository
-as `/irtx-jsprit/scenario_lyon/template.json`. Different configurations based on
+as `data/template_lyon.json`. Different configurations based on
 this template are described further below. The resulting configured scenario
 files can then be run using the following command:
 
 ```bash
 java -cp /irtx-jsprit/java/target/lead-jsprit-1.0.0.jar fr.irtx.lead.jsprit.RunSolver \
-  --problem-path /irtx-jsprit/data/scenario_*.json \
-  --solution-path /irtx-jsprit/data/solution_*.json \
+  --problem-path /irtx-jsprit/output/scenario_{scenario}.json \
+  --solution-path /irtx-jsprit/output/solution_{scenario}.json \
   --crs EPSG:2154 \
-  --osm-path /irtx-jsprit/data/scenario.osm.pbf
+  --osm-path /irtx-jsprit/output/scenario.osm.pbf
 ```
 
-In each case, a different `/irtx-jsprit/data/scenario.json` can be generated using
+Here, `{scenario}` should be replaced by `{scenario} = baseline_2022 | ucc_2022 | ucc_2030`.
+In each case, a different `/irtx-jsprit/output/scenario_{scenario}.json` can be generated using
 the configuration tool:
 
 **Baseline 2022**
 
-Note that the output from the parcel generation connector should be located
-in `/irtx-parcels-to-jsprit/output` in this example.
-
 ```bash
 python3 prepare_scenario.py \
-  --scenario-path scenario_lyon/template.json \
-  --output-path data/scenario_baseline_2022.json \
-  --operator-path scenario_lyon/rexel.json \
-  --operator-path /irtx-parcels-to-jsprit/output/laposte_2022.json \
+  --scenario-path data/template_lyon.json \
+  --output-path /irtx-jsprit/output/scenario_baseline_2022.json \
+  --operator-path data/rexel_lyon.json \
+  --operator-path /irtx-parcels-jsprit-connector/output/laposte_2022.json \
   --shipment-type:rexel pickup \
   --shipment-type:laposte delivery \
   --consolidation-type:rexel none \
@@ -437,10 +437,10 @@ by changing the last four lines.
 
 ```bash
 python3 prepare_scenario.py \
-  --scenario-path scenario_lyon/template.json \
-  --output-path data/scenario_ucc_2022.json \
-  --operator-path scenario_lyon/rexel.json \
-  --operator-path /irtx-parcels-to-jsprit/output/laposte_2022.json \
+  --scenario-path data/template_lyon.json \
+  --output-path /irtx-jsprit/output/scenario_ucc_2022.json \
+  --operator-path data/rexel_lyon.json \
+  --operator-path /irtx-parcels-jsprit-connector/output/laposte_2022.json \
   --shipment-type:rexel delivery \
   --shipment-type:laposte none \
   --consolidation-type:rexel delivery \
@@ -456,10 +456,10 @@ In this scenario the parcel demand for 2030 is used.
 
 ```bash
 python3 prepare_scenario.py \
-  --scenario-path scenario_lyon/template.json \
-  --output-path data/scenario_ucc_2030.json \
-  --operator-path scenario_lyon/rexel.json \
-  --operator-path /path/to/parcels/laposte_2030.json \
+  --scenario-path data/template_lyon.json \
+  --output-path /irtx-jsprit/output/scenario_ucc_2030.json \
+  --operator-path data/rexel_lyon.json \
+  --operator-path /irtx-parcels-jsprit-connector/output/laposte_2030.json \
   --shipment-type:rexel delivery \
   --shipment-type:laposte none \
   --consolidation-type:rexel delivery \
