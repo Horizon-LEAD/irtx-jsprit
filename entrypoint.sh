@@ -27,7 +27,7 @@ function show_help () {
     echo -e "${REV}-v${NORM}\tSets verbosity level"
     echo -e "${REV}-h${NORM}\tShows this message"
     echo -e "${BOLD}Examples:${NORM}"
-    echo -e "./entrypoint.sh -v ./sample-data/input/perimeter_lyon.gpkg ./sample-data/input/rhone-alpes-latest.osm.pbf ./sample-data/output/"
+    echo -e "./entrypoint.sh -v ./sample-data/input/perimeter_lyon.gpkg ./sample-data/input/rhone-alpes-latest.osm.pbf ./sample-data/input/rexel_lyon.json delivery delivery ./sample-data/output/"
 }
 
 ####################################################################################################
