@@ -1,3 +1,5 @@
 /.ipynb_checkpoints
 /input
 /output
+.vscode
+.DS_Store
