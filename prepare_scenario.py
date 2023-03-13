@@ -1,4 +1,5 @@
-import sys, os, json
+import sys
+import json
 
 ### Parse arguments
 arguments = sys.argv[1:]
@@ -110,15 +111,17 @@ if output_path is None:
     raise RuntimeError("No output path (--output-path) specified")
 
 ### Load scenario$
-with open(scenario_path) as f:
+with open(scenario_path, encoding="utf8") as f:
     scenario = json.load(f)
 
 ### Integrate operators
-if not "operators" in scenario: scenario["operators"] = []
-operator_ids = set([operator["id"] for operator in scenario["operators"]])
+if not "operators" in scenario:
+    scenario["operators"] = []
+
+operator_ids = {operator["id"] for operator in scenario["operators"]}
 
 for operator_path in operator_paths:
-    with open(operator_path) as f:
+    with open(operator_path, encoding="utf8") as f:
         operator = json.load(f)
 
     if operator["id"] in operator_ids:
@@ -156,7 +159,7 @@ for operator_id, salary in salaries.items():
             operator["daily_driver_salary_EUR"] = salary
 
 ### Update vehicle type properties
-vehicle_type_ids = set([vt["id"] for vt in scenario["vehicle_types"]])
+vehicle_type_ids = {vt["id"] for vt in scenario["vehicle_types"]}
 
 for vehicle_type_id, property, value in vehicle_type_properties:
     if not vehicle_type_id in vehicle_type_ids:
@@ -167,5 +170,5 @@ for vehicle_type_id, property, value in vehicle_type_properties:
             vehicle_type[property] = value
 
 ### Output
-with open(output_path, "w+") as f:
+with open(output_path, "w+", encoding='utf8') as f:
     json.dump(scenario, f)
