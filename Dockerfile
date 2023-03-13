@@ -47,4 +47,9 @@ COPY entrypoint.sh prepare_perimeter.py prepare_osm.sh prepare_scenario.py /srv/
 COPY ./data/template_lyon.json /srv/app/data/
 RUN chmod +x /srv/app/jsprit/entrypoint.sh
 
-ENTRYPOINT [ "/srv/app/entrypoint.sh" ]
+RUN apt-get update \
+    && apt-get install -y jq \
+    && apt-get clean && apt-get autoclean && apt-get autoremove \
+    && rm -rf /var/lib/apt/lists/*
+
+ENTRYPOINT [ "/srv/app/jsprit/entrypoint.sh" ]
