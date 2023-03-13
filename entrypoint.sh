@@ -84,7 +84,7 @@ operator_1_id=$(cat ${foperator_1} | jq .id | tr -d '"')
 operator_1_params="""
   --operator-path ${foperator_1} \
   --shipment-type:${operator_1_id} ${shipment_type_1} \
-  --consolidation-type:${operator_1_id} ${consolidation_type_1}
+  --consolidation-type:${operator_1_id} ${consolidation_type_1} \
   --driver-salary:${operator_1_id} ${driver_salary_1}
 """
 
@@ -95,20 +95,20 @@ if [ ! -d "${leftovers[6]}" ]; then
     fi
 fi
 
-if [ -d "${leftovers[6]}" ]; then
-  outdir=${leftovers[6]%/}
-else
+operator_2_params=""
+outdir=${leftovers[6]%/}
+if [ ! -d "${leftovers[6]}" ]; then
   foperator_2=${leftovers[6]}
   shipment_type_2=${leftovers[7]}
   consolidation_type_2=${leftovers[8]}
   driver_salary_2=${leftovers[9]}
-  outdir=${tmleftovers[10]%/}
+  outdir=${leftovers[10]%/}
 
   operator_2_id=$(cat ${foperator_2} | jq .id | tr -d '"')
   operator_2_params="""
     --operator-path ${foperator_2} \
     --shipment-type:${operator_2_id} ${shipment_type_2} \
-    --consolidation-type:${operator_2_id} ${consolidation_type_2}
+    --consolidation-type:${operator_2_id} ${consolidation_type_2} \
     --driver-salary:${operator_2_id} ${driver_salary_2}
   """
 fi
@@ -134,7 +134,7 @@ operator_id=$(cat ${foperator} | jq .id | tr -d '"')
 python3 /srv/app/jsprit/prepare_scenario.py \
   --scenario-path /srv/app/data/template_lyon.json \
   --output-path ${outdir}/scenario.json \
-  ${operator_1_params}
+  ${operator_1_params} \
   ${operator_2_params}
 
 # Run verification

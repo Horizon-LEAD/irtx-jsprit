@@ -487,5 +487,6 @@ docker run --rm \
   /data/input/operator.json \
   delivery \
   delivery \
+  136.0 \
   /data/output
 ```
