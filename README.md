@@ -490,3 +490,20 @@ docker run --rm \
   136.0 \
   /data/output
 ```
+
+```
+docker run --rm \
+  -v ${PWD}/sample-data:/data \
+  registry.gitlab.com/inlecom/lead/models/jsprit:latest \
+  /data/input/perimeter_lyon.gpkg \
+  /data/input/rhone-alpes-latest.osm.pbf \
+  /data/input/operator.json \
+  none \
+  delivery \
+  136.0 \
+  /data/input/rexel_lyon.json \
+  delivery \
+  delivery \
+  136.0 \
+  /data/output
+```
