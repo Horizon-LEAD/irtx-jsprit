@@ -62,22 +62,60 @@ shift "$(($OPTIND -1))"
 leftovers=(${@})
 fperimeter=${leftovers[0]}
 fosm=${leftovers[1]}
-foperator=${leftovers[2]}
-shipment_type=${leftovers[3]}
-consolidation_type=${leftovers[4]}
-outdir=${leftovers[5]%/}
+foperator_1=${leftovers[2]}
+shipment_type_1=${leftovers[3]}
+consolidation_type_1=${leftovers[4]}
+driver_salary_1=${leftovers[5]}
 
 ####################################################################################################
 # Input checks                                                                                     #
 ####################################################################################################
 if [ ! -f "${fperimeter}" ]; then
-     echo -e "Give a ${BOLD}valid${NORM} input perimeter file path\n"; show_usage; kill -INT $$
+    echo -e "Give a ${BOLD}valid${NORM} input perimeter file path\n"; show_usage; kill -INT $$
+fi
+if [ ! -f "${fosm}" ]; then
+    echo -e "Give a ${BOLD}valid${NORM} osm pbf file path\n"; show_usage; kill -INT $$
+fi
+if [ ! -f "${foperator_1}" ]; then
+    echo -e "Give a ${BOLD}valid${NORM} input operator 1 file path\n"; show_usage; kill -INT $$
 fi
 
-if [ ! -d "${outdir}" ]; then
-     echo -e "Give a ${BOLD}valid${NORM} output directory\n"; show_usage; kill -INT $$
+operator_1_id=$(cat ${foperator_1} | jq .id | tr -d '"')
+operator_1_params="""
+  --operator-path ${foperator_1} \
+  --shipment-type:${operator_1_id} ${shipment_type_1} \
+  --consolidation-type:${operator_1_id} ${consolidation_type_1}
+  --driver-salary:${operator_1_id} ${driver_salary_1}
+"""
+
+
+if [ ! -d "${leftovers[6]}" ]; then
+    if [ ! -f "${leftovers[6]}" ]; then
+      echo -e "Give a ${BOLD}valid${NORM} output directory\n"; show_usage; kill -INT $$
+    fi
 fi
 
+if [ -d "${leftovers[6]}" ]; then
+  outdir=${leftovers[6]%/}
+else
+  foperator_2=${leftovers[6]}
+  shipment_type_2=${leftovers[7]}
+  consolidation_type_2=${leftovers[8]}
+  driver_salary_2=${leftovers[9]}
+  outdir=${tmleftovers[10]%/}
+
+  operator_2_id=$(cat ${foperator_2} | jq .id | tr -d '"')
+  operator_2_params="""
+    --operator-path ${foperator_2} \
+    --shipment-type:${operator_2_id} ${shipment_type_2} \
+    --consolidation-type:${operator_2_id} ${consolidation_type_2}
+    --driver-salary:${operator_2_id} ${driver_salary_2}
+  """
+fi
+
+echo -e "outdir: ${outdir}\n"
+echo -e "oper1: ${operator_1_params}\n"
+echo -e "oper2: ${operator_2_params}\n"
 ####################################################################################################
 # Execution                                                                                        #
 ####################################################################################################
@@ -96,9 +134,8 @@ operator_id=$(cat ${foperator} | jq .id | tr -d '"')
 python3 /srv/app/jsprit/prepare_scenario.py \
   --scenario-path /srv/app/data/template_lyon.json \
   --output-path ${outdir}/scenario.json \
-  --operator-path ${foperator} \
-  --shipment-type:${operator_id} ${shipment_type} \
-  --consolidation-type:${operator_id} ${consolidation_type}
+  ${operator_1_params}
+  ${operator_2_params}
 
 # Run verification
 java -cp /srv/app/jsprit/java/target/lead-jsprit-1.0.0.jar fr.irtx.lead.jsprit.RunVerification
