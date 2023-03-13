@@ -1,9 +1,10 @@
 FROM ubuntu:22.04
 
 RUN apt-get update \
-    && apt-get install -y git wget python3.9 build-essential \
+    && apt-get install -y git wget python3.9 build-essential jq \
     && apt-get clean && apt-get autoclean && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
+ENV TERM=xterm
 
 RUN cd /tmp \
     && wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.9.1%2B1/OpenJDK11U-jdk_x64_linux_hotspot_11.0.9.1_1.tar.gz -O java.tar.gz \
@@ -46,10 +47,5 @@ RUN cd /srv/app/jsprit/java \
 COPY entrypoint.sh prepare_perimeter.py prepare_osm.sh prepare_scenario.py /srv/app/jsprit/
 COPY ./data/template_lyon.json /srv/app/data/
 RUN chmod +x /srv/app/jsprit/entrypoint.sh
-
-RUN apt-get update \
-    && apt-get install -y jq \
-    && apt-get clean && apt-get autoclean && apt-get autoremove \
-    && rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT [ "/srv/app/jsprit/entrypoint.sh" ]
