@@ -475,3 +475,17 @@ vehicle parameters.
 
 In the platform a user could, for instance, a list of prepared operator data
 sets that can then be tested in combination using the model.
+
+## Docker execution
+
+```
+docker run --rm \
+  -v ${PWD}/sample-data:/data \
+  registry.gitlab.com/inlecom/lead/models/jsprit:latest \
+  /data/input/perimeter_lyon.gpkg \
+  /data/input/rhone-alpes-latest.osm.pbf \
+  /data/input/operator.json \
+  delivery \
+  delivery \
+  /data/output
+```
