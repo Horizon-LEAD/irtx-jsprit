@@ -21,7 +21,7 @@
             "modelDataType": {
                 "name": "file",
                 "dataType": "file",
-                "extension": "shp|gpkg"
+                "extension": "gpkg"
             }
         },
         {
@@ -36,13 +36,13 @@
             "modelDataType": {
                 "name": "file",
                 "dataType": "file",
-                "extension": "osm.pbf"
+                "extension": "pbf"
             }
         },
         {
-            "name": "Scenario template input path",
+            "name": "Operator 1 JSON",
             "variableName": "foperator_1",
-            "description": "Path to the scenario definition file",
+            "description": " The input path of the first operator json file",
             "isOutput": false,
             "isOutputDir": false,
             "isOptional": false,
@@ -55,9 +55,9 @@
             }
         },
         {
-            "name": "Shipment type for operator_1",
+            "name": "Shipment type for Operator 1",
             "variableName": "shipment_type_1",
-            "description": "Overrides the shipment type of operator_1",
+            "description": "Overrides the shipment type of the first operator",
             "isOutput": false,
             "isOutputDir": false,
             "isOptional": false,
@@ -65,14 +65,13 @@
             "chartType": "NONE",
             "modelDataType": {
                 "name": "string",
-                "dataType": "string",
-                "allowed values": ["none", "delivery", "pickup"]
+                "dataType": "string"
             }
         },
         {
-            "name": "Concolidation type for operator_1",
+            "name": "Concolidation type for Operator 1",
             "variableName": "consolidation_type_1",
-            "description": "Overrides the consolidation type of operator_1",
+            "description": "Overrides the consolidation type of the first operator",
             "isOutput": false,
             "isOutputDir": false,
             "isOptional": false,
@@ -80,28 +79,27 @@
             "chartType": "NONE",
             "modelDataType": {
                 "name": "string",
-                "dataType": "string",
-                "allowed values": ["none", "delivery", "pickup"]
+                "dataType": "string"
             }
         },
         {
-            "name": "Driver salary for operator_1",
+            "name": "Driver salary for Operator 1",
             "variableName": "driver_salary_1",
-            "description": "Overrides the driver salary of operator_1",
+            "description": "Overrides the driver salary of the first operator",
             "isOutput": false,
             "isOutputDir": false,
             "isOptional": false,
             "inputType": "CLI",
             "chartType": "NONE",
             "modelDataType": {
-                "name": "float",
-                "dataType": "float"
+                "name": "number",
+                "dataType": "number"
             }
         },
         {
-            "name": "Scenario template input path",
+            "name": "Operator 2 JSON",
             "variableName": "foperator_2",
-            "description": "Path to the scenario definition file",
+            "description": "The input path of the second operator json file",
             "isOutput": false,
             "isOutputDir": false,
             "isOptional": true,
@@ -114,9 +112,9 @@
             }
         },
         {
-            "name": "Shipment type for operator_2",
+            "name": "Shipment type for Operator 2",
             "variableName": "shipment_type_2",
-            "description": "Overrides the shipment type of operator_2",
+            "description": "Overrides the shipment type of the second operator",
             "isOutput": false,
             "isOutputDir": false,
             "isOptional": true,
@@ -124,14 +122,13 @@
             "chartType": "NONE",
             "modelDataType": {
                 "name": "string",
-                "dataType": "string",
-                "allowed values": ["none", "delivery", "pickup"]
+                "dataType": "string"
             }
         },
         {
-            "name": "Concolidation type for operator_2",
+            "name": "Concolidation type for Operator 2",
             "variableName": "consolidation_type_2",
-            "description": "Overrides the consolidation type of operator_2",
+            "description": "Overrides the consolidation type of the second operator",
             "isOutput": false,
             "isOutputDir": false,
             "isOptional": true,
@@ -139,22 +136,21 @@
             "chartType": "NONE",
             "modelDataType": {
                 "name": "string",
-                "dataType": "string",
-                "allowed values": ["none", "delivery", "pickup"]
+                "dataType": "string"
             }
         },
         {
-            "name": "Driver salary for operator_2",
+            "name": "Driver salary for Operator 2",
             "variableName": "driver_salary_2",
-            "description": "Overrides the driver salary of operator_2",
+            "description": "Overrides the driver salary of the second operator",
             "isOutput": false,
             "isOutputDir": false,
             "isOptional": true,
             "inputType": "CLI",
             "chartType": "NONE",
             "modelDataType": {
-                "name": "float",
-                "dataType": "float"
+                "name": "number",
+                "dataType": "number"
             }
         },
         {
@@ -182,7 +178,6 @@
             "isOutput": true,
             "isOutputDir": false,
             "isOptional": false,
-            "inputType": "CLI",
             "chartType": "NONE",
             "modelDataType": {
                 "name": "file",
@@ -197,7 +192,6 @@
             "isOutput": true,
             "isOutputDir": false,
             "isOptional": false,
-            "inputType": "CLI",
             "chartType": "NONE",
             "modelDataType": {
                 "name": "file",
@@ -212,7 +206,6 @@
             "isOutput": true,
             "isOutputDir": false,
             "isOptional": false,
-            "inputType": "CLI",
             "chartType": "NONE",
             "modelDataType": {
                 "name": "file",
@@ -227,7 +220,6 @@
             "isOutput": true,
             "isOutputDir": false,
             "isOptional": false,
-            "inputType": "CLI",
             "chartType": "NONE",
             "modelDataType": {
                 "name": "file",
