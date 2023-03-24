@@ -3,9 +3,6 @@
     "description":"The model optimizes routing and fleet costs for a number of operators individually or when using an Urban Consolidation Center",
     "version": "1.0.0",
     "status":"draft",
-    "types": [
-        {"name": "Network", "description":"Description"}
-    ],
     "dockerImage":"registry.gitlab.com/inlecom/lead/models/jsprit:latest",
     "url": "https://github.com/Horizon-LEAD/irtx-jsprit",
     "modelData":  [
